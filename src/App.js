@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useQueryParam, StringParam } from 'use-query-params';
 
-import Box from '@material-ui/core/Box';
-
 import ErrorAlert from './components/ErrorAlert';
+import Footer from './components/Footer';
+import Header from './components/Header';
 import Login from './components/Login';
 import SQLWorker from './sql.worker';
 
@@ -57,16 +57,18 @@ function App() {
     }
   }, [dbReady]);
 
-  if (workerError) {
-    return (
-      <ErrorAlert clearError={() => setWorkerError(null)} error={workerError} />
-    );
-  }
-
   return (
-    <Box height="100vh" width="100vw">
+    <>
+      <Header />
+      {workerError && (
+        <ErrorAlert
+          clearError={() => setWorkerError(null)}
+          error={workerError}
+        />
+      )}
       {!user && <Login apiKey={apiKey} setUser={setUser} user={user} />}
-    </Box>
+      <Footer data={data} />
+    </>
   );
 }
 

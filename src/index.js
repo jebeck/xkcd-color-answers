@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
+import Box from '@material-ui/core/Box';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const darkTheme = createMuiTheme({
@@ -14,11 +16,18 @@ const darkTheme = createMuiTheme({
     },
     type: 'dark',
   },
+  typography: {
+    fontFamily: ['Space Mono', 'monospace'],
+  },
 });
 
 ReactDOM.render(
   <ThemeProvider theme={darkTheme}>
-    <App />
+    <CssBaseline>
+      <Box height="100vh" width="100vw">
+        <App />
+      </Box>
+    </CssBaseline>
   </ThemeProvider>,
   document.getElementById('root')
 );
