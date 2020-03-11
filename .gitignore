@@ -24,3 +24,6 @@ yarn-error.log*
 
 public/xkcd_color_survey.sqlite
 .env
+
+# Local Netlify folder
+.netlify
