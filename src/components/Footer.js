@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { format } from 'd3-format';
 
 import { useTheme } from '@material-ui/core/styles';
 
-export default function Footer({ data }) {
+export default forwardRef(function Footer({ data }, ref) {
   const theme = useTheme();
 
   if (data?.length) {
     return (
       <footer
+        ref={ref}
         style={{
           bottom: 0,
           fontSize: '2.5rem',
@@ -24,4 +25,4 @@ export default function Footer({ data }) {
     );
   }
   return null;
-}
+});

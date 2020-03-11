@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import useMeasure from 'react-use-measure';
 import { useQueryParam, StringParam } from 'use-query-params';
 
+import DecoderForm from './components/form/DecoderForm';
 import ErrorAlert from './components/ErrorAlert';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -14,6 +16,8 @@ function App() {
   const [dbReady, setDbReady] = useState(false);
   const [workerError, setWorkerError] = useState(null);
   const [user, setUser] = useState(null);
+  const [headerRef, headerBounds] = useMeasure();
+  const [footerRef, footerBounds] = useMeasure();
 
   useEffect(() => {
     const worker = new SQLWorker();
@@ -58,8 +62,8 @@ function App() {
   }, [dbReady]);
 
   return (
-    <>
-      <Header />
+    <div style={{ overflow: 'hidden' }}>
+      <Header ref={headerRef} />
       {workerError && (
         <ErrorAlert
           clearError={() => setWorkerError(null)}
@@ -67,8 +71,14 @@ function App() {
         />
       )}
       {!user && <Login apiKey={apiKey} setUser={setUser} user={user} />}
-      <Footer data={data} />
-    </>
+      {data && (
+        <DecoderForm
+          bounds={{ top: headerBounds.height, bottom: footerBounds.height }}
+          answers={data}
+        />
+      )}
+      <Footer data={data} ref={footerRef} />
+    </div>
   );
 }
 

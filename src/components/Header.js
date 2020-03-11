@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
 import { useTheme } from '@material-ui/core/styles';
 
-export default function Header() {
+export default forwardRef(function Header(props, ref) {
   const theme = useTheme();
 
   return (
     <header
+      ref={ref}
       style={{
         fontSize: '2.5rem',
         fontStyle: 'italic',
@@ -21,4 +22,4 @@ export default function Header() {
       xkcd color survey answers decoder
     </header>
   );
-}
+});
