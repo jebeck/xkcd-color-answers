@@ -66,7 +66,7 @@ export default function Login({ apiKey, setUser, user }) {
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          You give e-mail. Then&nbsp;&nbsp;
+          You give e-mail. Then&nbsp;
           <span role="img" aria-label="ogre emoji">
             👹
           </span>
