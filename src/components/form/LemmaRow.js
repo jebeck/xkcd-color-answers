@@ -23,21 +23,27 @@ export default function LemmaRow({ dispatch, index, state, warnings }) {
         .where('value', '==', state.value)
         .get()
         .then(snapshot => {
-          snapshot.forEach(doc => {
+          snapshot.forEach(async doc => {
             dispatch(actions.setLemmaValue(index, 'id', doc.id));
-            Object.entries(doc.data()).forEach(([key, value]) => {
-              const updatedKeys = [];
-              if (value !== state[key]) {
-                updatedKeys.push(key);
-                dispatch(actions.setLemmaValue(index, key, value));
+            const pairs = Object.entries(doc.data());
+            for (let i = 0; i < pairs.length; ++i) {
+              const [key, value] = pairs[i];
+              if (key !== 'value') {
+                const valueDoc = await value.get();
+                const actualValue = valueDoc.data()[key];
+                const updatedKeys = [];
+                if (actualValue !== state[key]) {
+                  updatedKeys.push(key);
+                  dispatch(actions.setLemmaValue(index, key, actualValue));
+                }
+                if (updatedKeys.length) {
+                  dispatch(actions.setUpdatedWarning(index, updatedKeys));
+                  setTimeout(() => {
+                    dispatch(actions.resetUpdatedWarning(index));
+                  }, 2500);
+                }
               }
-              if (updatedKeys.length) {
-                dispatch(actions.setUpdatedWarning(index, updatedKeys));
-                setTimeout(() => {
-                  dispatch(actions.resetUpdatedWarning(index));
-                }, 2500);
-              }
-            });
+            }
           });
         });
     }
