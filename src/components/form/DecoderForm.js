@@ -16,7 +16,7 @@ import { actions, formReducer, makeBaseLemma } from '../../formReducer';
 import CurrentAnswer from '../CurrentAnswer';
 import LemmaRow from './LemmaRow';
 
-export default function DecoderForm({ answers, bounds }) {
+export default function DecoderForm({ answers }) {
   const theme = useTheme();
   const db = useMemo(() => firebase.firestore(), []);
 
@@ -33,14 +33,7 @@ export default function DecoderForm({ answers, bounds }) {
   }, [answers]);
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      height={`calc(100vh - ${bounds.top + bounds.bottom}px)`}
-      margin={`${bounds.top}px 0 ${bounds.bottom}px`}
-      padding="0 1.5rem"
-      width="100%"
-    >
+    <>
       <hr
         style={{ borderColor: theme.palette.secondary.dark, width: '100%' }}
       />
@@ -108,6 +101,6 @@ export default function DecoderForm({ answers, bounds }) {
         </Button>
       </Box>
       <hr style={{ borderColor: theme.palette.primary.dark, width: '100%' }} />
-    </Box>
+    </>
   );
 }

@@ -6,6 +6,9 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
+import Box from '@material-ui/core/Box';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 import DecoderForm from './components/form/DecoderForm';
 import ErrorAlert from './components/ErrorAlert';
 import Footer from './components/Footer';
@@ -116,13 +119,56 @@ function App() {
         />
       )}
       {!user && <Login apiKey={apiKey} setUser={setUser} user={user} />}
-      {data && (
-        <DecoderForm
-          bounds={{ top: headerBounds.height, bottom: footerBounds.height }}
-          answers={data}
-        />
-      )}
-      <Footer data={data} ref={footerRef} />
+
+      <Box
+        display="flex"
+        flexDirection="column"
+        height={`calc(100vh - ${headerBounds.height + footerBounds.height}px)`}
+        margin={`${headerBounds.height}px 0 ${footerBounds.height}px`}
+        padding="0 1.5rem"
+        width="100%"
+      >
+        {!!answersSize && data && <DecoderForm answers={data} />}
+        {!answersSize && (
+          <Box
+            alignItems="center"
+            display="flex"
+            flexDirection="column"
+            height="95%"
+            justifyContent="center"
+          >
+            <LinearProgress
+              color="primary"
+              style={{ margin: '1rem 0', width: '80%' }}
+            ></LinearProgress>
+            <LinearProgress
+              color="secondary"
+              style={{ margin: '1rem 0', width: '80%' }}
+            ></LinearProgress>
+            <LinearProgress
+              color="primary"
+              style={{ margin: '1rem 0', width: '80%' }}
+            ></LinearProgress>
+            <LinearProgress
+              color="primary"
+              style={{ margin: '1rem 0', width: '80%' }}
+            ></LinearProgress>
+            <LinearProgress
+              color="primary"
+              style={{ margin: '1rem 0', width: '80%' }}
+            ></LinearProgress>
+            <LinearProgress
+              color="secondary"
+              style={{ margin: '1rem 0', width: '80%' }}
+            ></LinearProgress>
+            <LinearProgress
+              color="primary"
+              style={{ margin: '1rem 0', width: '80%' }}
+            ></LinearProgress>
+          </Box>
+        )}
+      </Box>
+      <Footer answersSize={answersSize} data={data} ref={footerRef} />
     </div>
   );
 }

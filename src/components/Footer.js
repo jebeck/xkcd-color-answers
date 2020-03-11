@@ -3,26 +3,25 @@ import { format } from 'd3-format';
 
 import { useTheme } from '@material-ui/core/styles';
 
-export default forwardRef(function Footer({ data }, ref) {
+export default forwardRef(function Footer({ answersSize, data }, ref) {
   const theme = useTheme();
 
-  if (data?.length) {
-    return (
-      <footer
-        ref={ref}
-        style={{
-          bottom: 0,
-          fontSize: '2.5rem',
-          fontStyle: 'italic',
-          left: 0,
-          padding: '1rem 1.5rem',
-          position: 'fixed',
-          textAlign: 'right',
-          textDecoration: `underline ${theme.palette.secondary.main} double`,
-          width: '100%',
-        }}
-      >{`${format(',')(data.length)} answers left to tag`}</footer>
-    );
-  }
-  return null;
+  return (
+    <footer
+      ref={ref}
+      style={{
+        bottom: 0,
+        fontSize: '2.5rem',
+        fontStyle: 'italic',
+        left: 0,
+        padding: '1rem 1.5rem',
+        position: 'fixed',
+        textAlign: 'right',
+        textDecoration: `underline ${theme.palette.secondary.main} double`,
+        width: '100%',
+      }}
+    >{`${
+      answersSize ? format(',')(data.length) : '?,???'
+    } answers left to tag`}</footer>
+  );
 });
