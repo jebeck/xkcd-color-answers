@@ -15,6 +15,15 @@ class FormReducer extends ImmerReducer {
   setLemmaValue(lemmaIdx, key, value) {
     this.draftState.lemmas[lemmaIdx][key] = value;
   }
+  resetUpdatedWarning(index) {
+    this.draftState.updatedFromStored[index] = null;
+  }
+  setUpdatedWarning(index, keys) {
+    this.draftState.updatedFromStored[index] = keys.reduce((obj, key) => {
+      obj[key] = true;
+      return obj;
+    }, {});
+  }
 }
 
 export const actions = createActionCreators(FormReducer);

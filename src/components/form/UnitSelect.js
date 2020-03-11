@@ -3,11 +3,15 @@ import React, { useEffect, useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
-import Box from '@material-ui/core/Box';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 
-export default function UnitSelect({ index, value }) {
+import { actions } from '../../formReducer';
+
+export default function UnitSelect({ dispatch, index, value, warning }) {
   const [units, setUnits] = useState([]);
 
   useEffect(() => {
@@ -25,11 +29,16 @@ export default function UnitSelect({ index, value }) {
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column-reverse" padding={'0 1.5rem'}>
+    <FormControl error={warning}>
+      <InputLabel id={`unit-${index}-label`}>unit</InputLabel>
       <Select
         disabled={!units.length}
         id={`unit-${index}`}
-        value={value}
+        labelId={`unit-${index}-label`}
+        onChange={e =>
+          dispatch(actions.setLemmaValue(index, 'unit', e.target.value))
+        }
+        value={units.length ? value : ''}
         style={{ width: '208px' }}
       >
         {units.map(unit => (
@@ -38,6 +47,7 @@ export default function UnitSelect({ index, value }) {
           </MenuItem>
         ))}
       </Select>
-    </Box>
+      {warning && <FormHelperText>Updated from store!</FormHelperText>}
+    </FormControl>
   );
 }

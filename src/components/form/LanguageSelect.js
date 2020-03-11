@@ -3,11 +3,15 @@ import React, { useEffect, useState } from 'react';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 
-import Box from '@material-ui/core/Box';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 
-export default function TypeSelect({ index, value }) {
+import { actions } from '../../formReducer';
+
+export default function TypeSelect({ dispatch, index, value, warning }) {
   const [languages, setLanguages] = useState([]);
 
   useEffect(() => {
@@ -25,11 +29,16 @@ export default function TypeSelect({ index, value }) {
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column-reverse" padding={'0 1.5rem'}>
+    <FormControl error={warning}>
+      <InputLabel id={`language-${index}-label`}>lang</InputLabel>
       <Select
         disabled={!languages.length}
         id={`language-${index}`}
-        value={value}
+        labelId={`language-${index}-label`}
+        onChange={e =>
+          dispatch(actions.setLemmaValue(index, 'language', e.target.value))
+        }
+        value={languages.length ? value : ''}
         style={{ width: '208px' }}
       >
         {languages.map(language => (
@@ -38,6 +47,7 @@ export default function TypeSelect({ index, value }) {
           </MenuItem>
         ))}
       </Select>
-    </Box>
+      {warning && <FormHelperText>Updated from store!</FormHelperText>}
+    </FormControl>
   );
 }

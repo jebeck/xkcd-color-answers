@@ -18,6 +18,7 @@ export default function DecoderForm({ answers, bounds }) {
     currentAnswer: 0,
     lemmas: [makeBaseLemma()],
     numLemmas: 1,
+    updatedFromStored: [],
   });
 
   return (
@@ -42,6 +43,7 @@ export default function DecoderForm({ answers, bounds }) {
             index={index}
             key={index}
             state={state.lemmas[index]}
+            warnings={state.updatedFromStored[index]}
           />
         ))}
       </Container>
