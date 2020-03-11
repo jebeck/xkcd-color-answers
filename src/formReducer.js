@@ -19,6 +19,13 @@ class FormReducer extends ImmerReducer {
       (lemma, idx) => idx !== index
     );
   }
+  reset() {
+    this.draftState.numLemmas = 1;
+    this.draftState.lemmas = [makeBaseLemma()];
+  }
+  setAnswers(answers) {
+    this.draftState.answers = answers;
+  }
   setCurrentAnswer() {
     this.draftState.currentAnswer += 1;
   }

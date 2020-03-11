@@ -1,5 +1,9 @@
-import React, { useReducer } from 'react';
+import _ from 'lodash';
+import React, { useEffect, useMemo, useReducer } from 'react';
 import { range } from 'd3-array';
+
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Box from '@material-ui/core/Box';
@@ -14,6 +18,7 @@ import LemmaRow from './LemmaRow';
 
 export default function DecoderForm({ answers, bounds }) {
   const theme = useTheme();
+  const db = useMemo(() => firebase.firestore(), []);
 
   const [state, dispatch] = useReducer(formReducer, {
     answers,
@@ -22,6 +27,10 @@ export default function DecoderForm({ answers, bounds }) {
     numLemmas: 1,
     updatedFromStored: [],
   });
+
+  useEffect(() => {
+    dispatch(actions.setAnswers(answers));
+  }, [answers]);
 
   return (
     <Box
@@ -58,8 +67,42 @@ export default function DecoderForm({ answers, bounds }) {
       <Box alignSelf="flex-end" paddingBottom="3rem">
         <Button
           color="primary"
-          style={{ fontSize: '2rem' }}
-          variant="contained"
+          onClick={async () => {
+            const answer = {
+              lemmas: [],
+              raw: state.answers[state.currentAnswer].colorname,
+            };
+            for (let i = 0; i < state.lemmas.length; ++i) {
+              const lemma = state.lemmas[i];
+              const { id } = lemma;
+              if (id) {
+                const ref = db.collection('lemmas').doc(id);
+                answer.lemmas.push(db.doc(ref.path));
+              } else {
+                try {
+                  const ref = await db.collection('lemmas').add(
+                    _.mapValues(lemma, (val, key) => {
+                      if (key !== 'value') {
+                        return db.doc(`${key}s/${val}`);
+                      }
+                      return val;
+                    })
+                  );
+                  answer.lemmas.push(db.doc(ref.path));
+                } catch (error) {
+                  throw error;
+                }
+              }
+            }
+            db.collection('answers')
+              .add(answer)
+              .catch(error => {
+                throw error;
+              });
+            dispatch(actions.reset());
+          }}
+          variant="outlined"
+          style={{ fontWeight: 'bold', fontSize: '2rem' }}
         >
           save &amp; next
         </Button>

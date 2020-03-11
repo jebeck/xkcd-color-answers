@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -14,6 +14,7 @@ import TypeSelect from './TypeSelect';
 import UnitSelect from './UnitSelect';
 
 export default function LemmaRow({ dispatch, index, state, warnings }) {
+  const textFieldRef = useRef();
   const checkIfLemmaExists = useCallback(() => {
     if (state.value !== '') {
       console.log(`Checking if lemma '${state.value}' exists...`);
@@ -23,6 +24,7 @@ export default function LemmaRow({ dispatch, index, state, warnings }) {
         .get()
         .then(snapshot => {
           snapshot.forEach(doc => {
+            dispatch(actions.setLemmaValue(index, 'id', doc.id));
             Object.entries(doc.data()).forEach(([key, value]) => {
               const updatedKeys = [];
               if (value !== state[key]) {
@@ -41,11 +43,18 @@ export default function LemmaRow({ dispatch, index, state, warnings }) {
     }
   }, [dispatch, index, state]);
 
+  useEffect(() => {
+    if (state.value === '' && index === 0) {
+      textFieldRef.current.focus();
+    }
+  }, [index, state.value]);
+
   return (
     <Box display="flex" margin="1.5rem 0" width="100%">
       <TextField
         autoFocus={index === 0}
         id={`value-${index}`}
+        inputRef={textFieldRef}
         label="value"
         onBlur={checkIfLemmaExists}
         onChange={e =>

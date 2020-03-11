@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 import { useQueryParam, StringParam } from 'use-query-params';
 
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+
 import DecoderForm from './components/form/DecoderForm';
 import ErrorAlert from './components/ErrorAlert';
 import Footer from './components/Footer';
@@ -12,10 +16,11 @@ import SQLWorker from './sql.worker';
 function App() {
   const workerRef = useRef(null);
   const [apiKey] = useQueryParam('apiKey', StringParam);
+  const [answersSize, setAnswersSize] = useState(null);
   const [data, setData] = useState(null);
   const [dbReady, setDbReady] = useState(false);
   const [workerError, setWorkerError] = useState(null);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(true);
   const [headerRef, headerBounds] = useMeasure();
   const [footerRef, footerBounds] = useMeasure();
 
@@ -60,6 +65,46 @@ function App() {
       });
     }
   }, [dbReady]);
+
+  useEffect(() => {
+    if (data) {
+      const db = firebase.firestore();
+      db.collection('answers').onSnapshot(snapshot => {
+        if (snapshot.size !== answersSize) {
+          setAnswersSize(snapshot.size);
+          const rawValues = [];
+          snapshot.forEach(doc => {
+            const { raw } = doc.data();
+            rawValues.push(raw);
+          });
+          setData(
+            data.filter(d => {
+              if (rawValues.includes(d.colorname)) {
+                return false;
+              }
+              return true;
+            })
+          );
+        }
+      });
+    }
+  }, [answersSize, data]);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        setUser(user);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (!firebase.auth().currentUser) {
+        setUser(null);
+      }
+    }, 2500);
+  }, [user]);
 
   return (
     <div style={{ overflow: 'hidden' }}>
