@@ -9,6 +9,16 @@ export function makeBaseLemma() {
 }
 
 class FormReducer extends ImmerReducer {
+  addLemma() {
+    this.draftState.numLemmas += 1;
+    this.draftState.lemmas.push(makeBaseLemma());
+  }
+  removeLemma(index) {
+    this.draftState.numLemmas -= 1;
+    this.draftState.lemmas = this.draftState.lemmas.filter(
+      (lemma, idx) => idx !== index
+    );
+  }
   setCurrentAnswer() {
     this.draftState.currentAnswer += 1;
   }

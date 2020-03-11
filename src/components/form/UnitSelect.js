@@ -29,7 +29,7 @@ export default function UnitSelect({ dispatch, index, value, warning }) {
   }, []);
 
   return (
-    <FormControl error={warning}>
+    <FormControl error={warning} style={{ paddingRight: '3rem' }}>
       <InputLabel id={`unit-${index}-label`}>unit</InputLabel>
       <Select
         disabled={!units.length}

@@ -29,7 +29,7 @@ export default function TypeSelect({ dispatch, index, value, warning }) {
   }, []);
 
   return (
-    <FormControl error={warning}>
+    <FormControl error={warning} style={{ paddingRight: '3rem' }}>
       <InputLabel id={`language-${index}-label`}>lang</InputLabel>
       <Select
         disabled={!languages.length}
