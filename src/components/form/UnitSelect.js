@@ -18,9 +18,9 @@ export default function UnitSelect({ dispatch, index, value, warning }) {
     const db = firebase.firestore();
     db.collection('units')
       .get()
-      .then(snapshot => {
+      .then((snapshot) => {
         const storedUnits = [];
-        snapshot.forEach(doc => {
+        snapshot.forEach((doc) => {
           const { unit } = doc.data();
           storedUnits.push(unit);
         });
@@ -35,13 +35,13 @@ export default function UnitSelect({ dispatch, index, value, warning }) {
         disabled={!units.length}
         id={`unit-${index}`}
         labelId={`unit-${index}-label`}
-        onChange={e =>
+        onChange={(e) =>
           dispatch(actions.setLemmaValue(index, 'unit', e.target.value))
         }
         value={units.length ? value : ''}
         style={{ width: '208px' }}
       >
-        {units.map(unit => (
+        {units.map((unit) => (
           <MenuItem key={unit} value={unit}>
             {unit}
           </MenuItem>

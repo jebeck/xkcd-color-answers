@@ -18,9 +18,9 @@ export default function TypeSelect({ dispatch, index, value, warning }) {
     const db = firebase.firestore();
     db.collection('types')
       .get()
-      .then(snapshot => {
+      .then((snapshot) => {
         const storedTypes = [];
-        snapshot.forEach(doc => {
+        snapshot.forEach((doc) => {
           const { type } = doc.data();
           storedTypes.push(type);
         });
@@ -35,13 +35,13 @@ export default function TypeSelect({ dispatch, index, value, warning }) {
         disabled={!types.length}
         id={`type-${index}`}
         labelId={`type-${index}-label`}
-        onChange={e =>
+        onChange={(e) =>
           dispatch(actions.setLemmaValue(index, 'type', e.target.value))
         }
         value={types.length ? value : ''}
         style={{ width: '208px' }}
       >
-        {types.map(type => (
+        {types.map((type) => (
           <MenuItem key={type} value={type}>
             {type}
           </MenuItem>

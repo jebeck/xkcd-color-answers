@@ -41,7 +41,7 @@ export default function DecoderForm({ answers }) {
         answerText={state.answers[state.currentAnswer].colorname}
       />
       <Container style={{ padding: '3rem' }}>
-        {range(0, state.numLemmas).map(index => (
+        {range(0, state.numLemmas).map((index) => (
           <LemmaRow
             dispatch={dispatch}
             index={index}
@@ -89,7 +89,7 @@ export default function DecoderForm({ answers }) {
             }
             db.collection('answers')
               .add(answer)
-              .catch(error => {
+              .catch((error) => {
                 throw error;
               });
             dispatch(actions.reset());

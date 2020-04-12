@@ -22,8 +22,8 @@ export default function LemmaRow({ dispatch, index, state, warnings }) {
       db.collection('lemmas')
         .where('value', '==', state.value)
         .get()
-        .then(snapshot => {
-          snapshot.forEach(async doc => {
+        .then((snapshot) => {
+          snapshot.forEach(async (doc) => {
             dispatch(actions.setLemmaValue(index, 'id', doc.id));
             const pairs = Object.entries(doc.data());
             for (let i = 0; i < pairs.length; ++i) {
@@ -63,7 +63,7 @@ export default function LemmaRow({ dispatch, index, state, warnings }) {
         inputRef={textFieldRef}
         label="value"
         onBlur={checkIfLemmaExists}
-        onChange={e =>
+        onChange={(e) =>
           dispatch(actions.setLemmaValue(index, 'value', e.target.value))
         }
         value={state?.value}

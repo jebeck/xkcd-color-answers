@@ -50,7 +50,7 @@ function App() {
       }
     };
 
-    worker.onerror = error => {
+    worker.onerror = (error) => {
       setWorkerError(error);
     };
   }, []);
@@ -72,16 +72,16 @@ function App() {
   useEffect(() => {
     if (data) {
       const db = firebase.firestore();
-      db.collection('answers').onSnapshot(snapshot => {
+      db.collection('answers').onSnapshot((snapshot) => {
         if (snapshot.size !== answersSize) {
           setAnswersSize(snapshot.size);
           const rawValues = [];
-          snapshot.forEach(doc => {
+          snapshot.forEach((doc) => {
             const { raw } = doc.data();
             rawValues.push(raw);
           });
           setData(
-            data.filter(d => {
+            data.filter((d) => {
               if (rawValues.includes(d.colorname)) {
                 return false;
               }
@@ -94,7 +94,7 @@ function App() {
   }, [answersSize, data]);
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
       }

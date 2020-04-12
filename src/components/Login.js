@@ -78,7 +78,7 @@ export default function Login({ apiKey, setUser, user }) {
           id="name"
           label="Email Address"
           margin="dense"
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           type="email"
           value={email}
         />

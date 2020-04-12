@@ -18,9 +18,9 @@ export default function TypeSelect({ dispatch, index, value, warning }) {
     const db = firebase.firestore();
     db.collection('languages')
       .get()
-      .then(snapshot => {
+      .then((snapshot) => {
         const storedLangs = [];
-        snapshot.forEach(doc => {
+        snapshot.forEach((doc) => {
           const { language } = doc.data();
           storedLangs.push(language);
         });
@@ -35,13 +35,13 @@ export default function TypeSelect({ dispatch, index, value, warning }) {
         disabled={!languages.length}
         id={`language-${index}`}
         labelId={`language-${index}-label`}
-        onChange={e =>
+        onChange={(e) =>
           dispatch(actions.setLemmaValue(index, 'language', e.target.value))
         }
         value={languages.length ? value : ''}
         style={{ width: '208px' }}
       >
-        {languages.map(language => (
+        {languages.map((language) => (
           <MenuItem key={language} value={language}>
             {language}
           </MenuItem>

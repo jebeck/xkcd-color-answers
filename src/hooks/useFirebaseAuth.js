@@ -34,7 +34,7 @@ export default function useFirebaseAuth(email, setUser) {
       window.localStorage.setItem('emailForSignIn', email);
       const auth = firebase.auth();
       console.log('Sending Firebase sign-in e-mail...');
-      auth.sendSignInLinkToEmail(email, actionCodeSettings).catch(err => {
+      auth.sendSignInLinkToEmail(email, actionCodeSettings).catch((err) => {
         setLoginError(_.pick(err, ['code', 'message']));
         setSubmitted(false);
       });
@@ -48,11 +48,11 @@ export default function useFirebaseAuth(email, setUser) {
       const auth = firebase.auth();
       auth
         .signInWithEmailLink(email, window.location.href)
-        .then(result => {
+        .then((result) => {
           setUser(result.user);
           setSubmitted(false);
         })
-        .catch(err => {
+        .catch((err) => {
           setLoginError(_.pick(err, ['code', 'message']));
           setSubmitted(false);
         });
