@@ -11,7 +11,13 @@ import Select from '@material-ui/core/Select';
 
 import { actions } from '../../formReducer';
 
-export default function TypeSelect({ dispatch, index, value, warning }) {
+export default function TypeSelect({
+  dispatch,
+  index,
+  onBlur,
+  value,
+  warning,
+}) {
   const [languages, setLanguages] = useState([]);
 
   useEffect(() => {
@@ -35,6 +41,7 @@ export default function TypeSelect({ dispatch, index, value, warning }) {
         disabled={!languages.length}
         id={`language-${index}`}
         labelId={`language-${index}-label`}
+        onBlur={onBlur}
         onChange={(e) =>
           dispatch(actions.setLemmaValue(index, 'language', e.target.value))
         }

@@ -11,7 +11,13 @@ import Select from '@material-ui/core/Select';
 
 import { actions } from '../../formReducer';
 
-export default function UnitSelect({ dispatch, index, value, warning }) {
+export default function UnitSelect({
+  dispatch,
+  index,
+  onBlur,
+  value,
+  warning,
+}) {
   const [units, setUnits] = useState([]);
 
   useEffect(() => {
@@ -35,6 +41,7 @@ export default function UnitSelect({ dispatch, index, value, warning }) {
         disabled={!units.length}
         id={`unit-${index}`}
         labelId={`unit-${index}-label`}
+        onBlur={onBlur}
         onChange={(e) =>
           dispatch(actions.setLemmaValue(index, 'unit', e.target.value))
         }

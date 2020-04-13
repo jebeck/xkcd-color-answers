@@ -27,6 +27,7 @@ function App() {
   const [headerRef, headerBounds] = useMeasure();
   const [footerRef, footerBounds] = useMeasure();
 
+  /** set up SQLWorker */
   useEffect(() => {
     const worker = new SQLWorker();
     workerRef.current = worker;
@@ -59,6 +60,7 @@ function App() {
     };
   }, []);
 
+  /** use SQLWorker to query for all distinct colornames occurring at least 25 times from XKCD color survey answers table */
   useEffect(() => {
     if (dbReady) {
       const worker = workerRef.current;
@@ -73,6 +75,9 @@ function App() {
     }
   }, [dbReady]);
 
+  /** once distinct colornames retrieved, fetch tagged answers from Firestore
+   * and filter data down to only un-tagged colornames
+   */
   useEffect(() => {
     if (data) {
       const db = firebase.firestore();
@@ -97,6 +102,7 @@ function App() {
     }
   }, [answersSize, data]);
 
+  /** set user in state on Firebase auth state change */
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -105,6 +111,7 @@ function App() {
     });
   }, []);
 
+  /** allow 2.5 seconds for previously logged-in Firebase user to repopulate */
   useEffect(() => {
     setTimeout(() => {
       if (!firebase.auth().currentUser) {

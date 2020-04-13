@@ -72,18 +72,21 @@ export default function LemmaRow({ dispatch, index, state, warnings }) {
       <TypeSelect
         dispatch={dispatch}
         index={index}
+        onBlur={checkIfLemmaExists}
         value={state?.type}
         warning={warnings?.type}
       />
       <UnitSelect
         dispatch={dispatch}
         index={index}
+        onBlur={checkIfLemmaExists}
         value={state?.unit}
         warning={warnings?.unit}
       />
       <LanguageSelect
         dispatch={dispatch}
         index={index}
+        onBlur={checkIfLemmaExists}
         value={state?.language}
         warning={warnings?.language}
       />
