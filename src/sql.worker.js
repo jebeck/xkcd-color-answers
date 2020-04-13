@@ -36,10 +36,12 @@ self.onmessage = ({ data: { payload, type } }) => {
       postMessage({
         type: 'data',
         payload: {
-          data: values.map(([v1, v2]) => ({
-            [columns[0]]: v1,
-            [columns[1]]: v2,
-          })),
+          data: values.map((values) =>
+            values.reduce((obj, val, idx) => {
+              obj[columns[idx]] = val;
+              return obj;
+            }, {})
+          ),
         },
       });
       break;
