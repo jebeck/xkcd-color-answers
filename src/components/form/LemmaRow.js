@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -9,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 
 import { actions } from '../../formReducer';
+import ErrorAlert from '../ErrorAlert';
 import LanguageSelect from './LanguageSelect';
 import TypeSelect from './TypeSelect';
 import UnitSelect from './UnitSelect';
@@ -23,6 +30,8 @@ export default function LemmaRow({
   units,
   warnings,
 }) {
+  const [error, setError] = useState(null);
+  const fireDb = useMemo(() => firebase.firestore(), []);
   const textFieldRef = useRef();
 
   /** in order to enforce consistent type, unit, and language for each lemma,
@@ -33,8 +42,8 @@ export default function LemmaRow({
     if (state.value !== '') {
       console.log(`Checking if lemma '${state.value}' exists...`);
       setCanSave(false);
-      const db = firebase.firestore();
-      db.collection('lemmas')
+      fireDb
+        .collection('lemmas')
         .where('value', '==', state.value)
         .get()
         .then((snapshot) => {
@@ -72,9 +81,18 @@ export default function LemmaRow({
               }
             }
           });
+        })
+        .catch((error) => {
+          setError(
+            new Error(
+              `Error checking for existence of ${state.value}: ${
+                error?.message || 'Unknown error'
+              }`
+            )
+          );
         });
     }
-  }, [dispatch, index, setCanSave, state]);
+  }, [dispatch, fireDb, index, setCanSave, state]);
 
   useEffect(() => {
     if (state.value === '' && index === 0) {
@@ -83,48 +101,53 @@ export default function LemmaRow({
   }, [index, state.value]);
 
   return (
-    <Box display="flex" margin="1.5rem 0" minHeight="4.5rem" width="100%">
-      <TextField
-        autoFocus
-        id={`value-${index}`}
-        inputRef={textFieldRef}
-        label="value"
-        onBlur={checkIfLemmaExists}
-        onChange={(e) =>
-          dispatch(actions.setLemmaValue(index, 'value', e.target.value))
-        }
-        value={state?.value}
-        style={{ paddingRight: '3rem', width: '312px' }}
-      ></TextField>
-      <TypeSelect
-        dispatch={dispatch}
-        index={index}
-        onBlur={checkIfLemmaExists}
-        types={types}
-        value={state?.type}
-        warning={warnings?.type}
-      />
-      <UnitSelect
-        dispatch={dispatch}
-        index={index}
-        onBlur={checkIfLemmaExists}
-        units={units}
-        value={state?.unit}
-        warning={warnings?.unit}
-      />
-      <LanguageSelect
-        dispatch={dispatch}
-        index={index}
-        languages={languages}
-        onBlur={checkIfLemmaExists}
-        value={state?.language}
-        warning={warnings?.language}
-      />
-      {index > 0 ? (
-        <IconButton onClick={() => dispatch(actions.removeLemma(index))}>
-          <DeleteIcon color="secondary" />
-        </IconButton>
+    <>
+      {error ? (
+        <ErrorAlert clearError={() => setError(null)} error={error} />
       ) : null}
-    </Box>
+      <Box display="flex" margin="1.5rem 0" minHeight="4.5rem" width="100%">
+        <TextField
+          autoFocus
+          id={`value-${index}`}
+          inputRef={textFieldRef}
+          label="value"
+          onBlur={checkIfLemmaExists}
+          onChange={(e) =>
+            dispatch(actions.setLemmaValue(index, 'value', e.target.value))
+          }
+          value={state?.value}
+          style={{ paddingRight: '3rem', width: '312px' }}
+        ></TextField>
+        <TypeSelect
+          dispatch={dispatch}
+          index={index}
+          onBlur={checkIfLemmaExists}
+          types={types}
+          value={state?.type}
+          warning={warnings?.type}
+        />
+        <UnitSelect
+          dispatch={dispatch}
+          index={index}
+          onBlur={checkIfLemmaExists}
+          units={units}
+          value={state?.unit}
+          warning={warnings?.unit}
+        />
+        <LanguageSelect
+          dispatch={dispatch}
+          index={index}
+          languages={languages}
+          onBlur={checkIfLemmaExists}
+          value={state?.language}
+          warning={warnings?.language}
+        />
+        {index > 0 ? (
+          <IconButton onClick={() => dispatch(actions.removeLemma(index))}>
+            <DeleteIcon color="secondary" />
+          </IconButton>
+        ) : null}
+      </Box>
+    </>
   );
 }
