@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import React, { useEffect, useMemo, useReducer } from 'react';
+import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { range } from 'd3-array';
 
 import firebase from 'firebase/app';
@@ -14,6 +14,7 @@ import { useTheme } from '@material-ui/core/styles';
 
 import { actions, formReducer, makeBaseLemma } from '../../formReducer';
 import CurrentAnswer from '../CurrentAnswer';
+import ErrorAlert from '../ErrorAlert';
 import LemmaRow from './LemmaRow';
 
 export default function DecoderForm({ answers }) {
@@ -27,6 +28,8 @@ export default function DecoderForm({ answers }) {
     numLemmas: 1,
     updatedFromStored: [],
   });
+  const [canSave, setCanSave] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     dispatch(actions.setAnswers(answers));
@@ -34,6 +37,7 @@ export default function DecoderForm({ answers }) {
 
   return (
     <>
+      {error && <ErrorAlert clearError={() => setError(null)} error={error} />}
       <hr
         style={{ borderColor: theme.palette.secondary.dark, width: '100%' }}
       />
@@ -46,6 +50,7 @@ export default function DecoderForm({ answers }) {
             dispatch={dispatch}
             index={index}
             key={index}
+            setCanSave={setCanSave}
             state={state.lemmas[index]}
             warnings={state.updatedFromStored[index]}
           />
@@ -60,42 +65,55 @@ export default function DecoderForm({ answers }) {
       <Box alignSelf="flex-end" paddingBottom="3rem">
         <Button
           color="primary"
-          onClick={async () => {
-            const answer = {
-              lemmas: [],
-              raw: state.answers[state.currentAnswer].colorname,
-            };
-            for (let i = 0; i < state.lemmas.length; ++i) {
-              const lemma = state.lemmas[i];
-              const { id } = lemma;
-              if (id) {
-                const ref = db.collection('lemmas').doc(id);
-                answer.lemmas.push(db.doc(ref.path));
-              } else {
-                try {
-                  const ref = await db.collection('lemmas').add(
-                    _.mapValues(lemma, (val, key) => {
-                      if (key !== 'value') {
-                        return db.doc(`${key}s/${val}`);
+          disabled={!canSave}
+          onClick={
+            canSave
+              ? async () => {
+                  console.log(`Clicked save & next`);
+                  const answer = {
+                    lemmas: [],
+                    raw: state.answers[state.currentAnswer].colorname,
+                  };
+                  for (let i = 0; i < state.lemmas.length; ++i) {
+                    const lemma = state.lemmas[i];
+                    const { id } = lemma;
+                    if (id) {
+                      const ref = db.collection('lemmas').doc(id);
+                      answer.lemmas.push(db.doc(ref.path));
+                    } else {
+                      try {
+                        const ref = await db.collection('lemmas').add(
+                          _.mapValues(lemma, (val, key) => {
+                            if (key !== 'value') {
+                              return db.doc(`${key}s/${val}`);
+                            }
+                            return val;
+                          })
+                        );
+                        console.log(`New lemma ${ref.id} added`);
+                        answer.lemmas.push(db.doc(ref.path));
+                      } catch (error) {
+                        setError(error);
                       }
-                      return val;
-                    })
-                  );
-                  answer.lemmas.push(db.doc(ref.path));
-                } catch (error) {
-                  throw error;
+                    }
+                  }
+                  try {
+                    const ref = await db.collection('answers').add(answer);
+                    console.log(`New answer ${ref.id} added`);
+                  } catch (error) {
+                    setError(error);
+                  }
+                  dispatch(actions.reset());
                 }
-              }
-            }
-            db.collection('answers')
-              .add(answer)
-              .catch((error) => {
-                throw error;
-              });
-            dispatch(actions.reset());
-          }}
+              : () => {}
+          }
           variant="outlined"
-          style={{ fontWeight: 'bold', fontSize: '2rem' }}
+          style={{
+            cursor: canSave ? 'pointer' : 'not-allowed',
+            fontWeight: 'bold',
+            fontSize: '2rem',
+            pointerEvents: 'unset',
+          }}
         >
           save &amp; next
         </Button>

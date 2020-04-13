@@ -13,29 +13,53 @@ import LanguageSelect from './LanguageSelect';
 import TypeSelect from './TypeSelect';
 import UnitSelect from './UnitSelect';
 
-export default function LemmaRow({ dispatch, index, state, warnings }) {
+export default function LemmaRow({
+  dispatch,
+  index,
+  setCanSave,
+  state,
+  warnings,
+}) {
   const textFieldRef = useRef();
+
+  /** in order to enforce consistent type, unit, and language for each lemma,
+   * check for the existence of a lemma and change mismatched form fields to previous stored values
+   * with a warning notifying the user that this correction has been made :)
+   */
   const checkIfLemmaExists = useCallback(() => {
     if (state.value !== '') {
       console.log(`Checking if lemma '${state.value}' exists...`);
+      setCanSave(false);
       const db = firebase.firestore();
       db.collection('lemmas')
         .where('value', '==', state.value)
         .get()
         .then((snapshot) => {
+          if (snapshot.size === 0) {
+            console.log(
+              `Lemma ${state.value} does not exist (yet) in Firestore...`
+            );
+            return setCanSave(true);
+          }
           snapshot.forEach(async (doc) => {
             dispatch(actions.setLemmaValue(index, 'id', doc.id));
+
             const pairs = Object.entries(doc.data());
+
             for (let i = 0; i < pairs.length; ++i) {
               const [key, value] = pairs[i];
+
               if (key !== 'value') {
                 const valueDoc = await value.get();
                 const actualValue = valueDoc.data()[key];
                 const updatedKeys = [];
+
                 if (actualValue !== state[key]) {
                   updatedKeys.push(key);
                   dispatch(actions.setLemmaValue(index, key, actualValue));
                 }
+                setCanSave(true);
+
                 if (updatedKeys.length) {
                   dispatch(actions.setUpdatedWarning(index, updatedKeys));
                   setTimeout(() => {
@@ -47,7 +71,7 @@ export default function LemmaRow({ dispatch, index, state, warnings }) {
           });
         });
     }
-  }, [dispatch, index, state]);
+  }, [dispatch, index, setCanSave, state]);
 
   useEffect(() => {
     if (state.value === '' && index === 0) {
