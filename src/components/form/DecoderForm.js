@@ -10,6 +10,7 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import IconButton from '@material-ui/core/IconButton';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import { useTheme } from '@material-ui/core/styles';
 
 import { actions, formReducer, makeBaseLemma } from '../../formReducer';
@@ -29,11 +30,14 @@ export default function DecoderForm({ answers }) {
     updatedFromStored: [],
   });
   const [canSave, setCanSave] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     dispatch(actions.setAnswers(answers));
   }, [answers]);
+
+  const buttonEnabled = canSave && !isSaving;
 
   return (
     <>
@@ -44,32 +48,56 @@ export default function DecoderForm({ answers }) {
       <CurrentAnswer
         answerText={state.answers[state.currentAnswer].colorname}
       />
-      <Container style={{ padding: '3rem' }}>
-        {range(0, state.numLemmas).map((index) => (
-          <LemmaRow
-            dispatch={dispatch}
-            index={index}
-            key={index}
-            setCanSave={setCanSave}
-            state={state.lemmas[index]}
-            warnings={state.updatedFromStored[index]}
-          />
-        ))}
-        <Box align="center" marginTop="2rem">
-          <IconButton onClick={() => dispatch(actions.addLemma())}>
-            <AddCircleIcon color="primary" fontSize="large" />
-          </IconButton>
+      {!isSaving ? (
+        <Container style={{ padding: '3rem', position: 'relative' }}>
+          {range(0, state.numLemmas).map((index) => (
+            <LemmaRow
+              dispatch={dispatch}
+              index={index}
+              key={index}
+              setCanSave={setCanSave}
+              state={state.lemmas[index]}
+              warnings={state.updatedFromStored[index]}
+            />
+          ))}
+          <Box align="center" marginTop="2rem">
+            <IconButton onClick={() => dispatch(actions.addLemma())}>
+              <AddCircleIcon color="primary" fontSize="large" />
+            </IconButton>
+          </Box>
+        </Container>
+      ) : null}
+      {isSaving ? (
+        <Box
+          alignItems="center"
+          display="flex"
+          flexDirection="column"
+          mt="5rem"
+        >
+          <LinearProgress
+            color="primary"
+            style={{ margin: '1rem 0', width: '80%' }}
+          ></LinearProgress>
+          <LinearProgress
+            color="secondary"
+            style={{ margin: '1rem 0', width: '80%' }}
+          ></LinearProgress>
+          <LinearProgress
+            color="primary"
+            style={{ margin: '1rem 0', width: '80%' }}
+          ></LinearProgress>
         </Box>
-      </Container>
+      ) : null}
       <Box flexGrow={1} />
       <Box alignSelf="flex-end" paddingBottom="3rem">
         <Button
           color="primary"
-          disabled={!canSave}
+          disabled={!buttonEnabled}
           onClick={
             canSave
               ? async () => {
                   console.log(`Clicked save & next`);
+                  setIsSaving(true);
                   const answer = {
                     lemmas: [],
                     raw: state.answers[state.currentAnswer].colorname,
@@ -93,7 +121,8 @@ export default function DecoderForm({ answers }) {
                         console.log(`New lemma ${ref.id} added`);
                         answer.lemmas.push(db.doc(ref.path));
                       } catch (error) {
-                        setError(error);
+                        setIsSaving(false);
+                        return setError(error);
                       }
                     }
                   }
@@ -101,15 +130,17 @@ export default function DecoderForm({ answers }) {
                     const ref = await db.collection('answers').add(answer);
                     console.log(`New answer ${ref.id} added`);
                   } catch (error) {
-                    setError(error);
+                    setIsSaving(false);
+                    return setError(error);
                   }
                   dispatch(actions.reset());
+                  setIsSaving(false);
                 }
               : () => {}
           }
           variant="outlined"
           style={{
-            cursor: canSave ? 'pointer' : 'not-allowed',
+            cursor: buttonEnabled ? 'pointer' : 'not-allowed',
             fontWeight: 'bold',
             fontSize: '2rem',
             pointerEvents: 'unset',
