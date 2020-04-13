@@ -53,6 +53,10 @@ function App() {
     worker.onerror = (error) => {
       setWorkerError(error);
     };
+
+    return () => {
+      worker.terminate();
+    };
   }, []);
 
   useEffect(() => {
@@ -119,7 +123,6 @@ function App() {
         />
       )}
       {!user && <Login apiKey={apiKey} setUser={setUser} user={user} />}
-
       <Box
         display="flex"
         flexDirection="column"
