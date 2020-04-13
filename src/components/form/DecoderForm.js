@@ -32,6 +32,48 @@ export default function DecoderForm({ answers }) {
   const [canSave, setCanSave] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
+  const fireDb = useMemo(() => firebase.firestore(), []);
+
+  const [languages, setLanguages] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [units, setUnits] = useState([]);
+
+  useEffect(() => {
+    const unsubLanguages = fireDb
+      .collection('languages')
+      .onSnapshot((snapshot) => {
+        const storedLangs = [];
+        snapshot.forEach((doc) => {
+          const { language } = doc.data();
+          storedLangs.push(language);
+        });
+        setLanguages(storedLangs);
+      });
+
+    const unsubTypes = fireDb.collection('types').onSnapshot((snapshot) => {
+      const storedTypes = [];
+      snapshot.forEach((doc) => {
+        const { type } = doc.data();
+        storedTypes.push(type);
+      });
+      setTypes(storedTypes);
+    });
+
+    const unsubUnits = fireDb.collection('units').onSnapshot((snapshot) => {
+      const storedUnits = [];
+      snapshot.forEach((doc) => {
+        const { unit } = doc.data();
+        storedUnits.push(unit);
+      });
+      setUnits(storedUnits);
+    });
+
+    return () => {
+      unsubLanguages();
+      unsubTypes();
+      unsubUnits();
+    };
+  }, [fireDb]);
 
   useEffect(() => {
     dispatch(actions.setAnswers(answers));
@@ -55,8 +97,11 @@ export default function DecoderForm({ answers }) {
               dispatch={dispatch}
               index={index}
               key={index}
+              languages={languages}
               setCanSave={setCanSave}
               state={state.lemmas[index]}
+              types={types}
+              units={units}
               warnings={state.updatedFromStored[index]}
             />
           ))}

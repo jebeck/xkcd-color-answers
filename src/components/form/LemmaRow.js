@@ -16,8 +16,11 @@ import UnitSelect from './UnitSelect';
 export default function LemmaRow({
   dispatch,
   index,
+  languages,
   setCanSave,
   state,
+  types,
+  units,
   warnings,
 }) {
   const textFieldRef = useRef();
@@ -97,6 +100,7 @@ export default function LemmaRow({
         dispatch={dispatch}
         index={index}
         onBlur={checkIfLemmaExists}
+        types={types}
         value={state?.type}
         warning={warnings?.type}
       />
@@ -104,12 +108,14 @@ export default function LemmaRow({
         dispatch={dispatch}
         index={index}
         onBlur={checkIfLemmaExists}
+        units={units}
         value={state?.unit}
         warning={warnings?.unit}
       />
       <LanguageSelect
         dispatch={dispatch}
         index={index}
+        languages={languages}
         onBlur={checkIfLemmaExists}
         value={state?.language}
         warning={warnings?.language}

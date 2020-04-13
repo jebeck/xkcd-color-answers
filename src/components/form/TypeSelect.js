@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-
-import firebase from 'firebase/app';
+import React from 'react';
 import 'firebase/firestore';
 
 import FormControl from '@material-ui/core/FormControl';
@@ -15,37 +13,22 @@ export default function TypeSelect({
   dispatch,
   index,
   onBlur,
+  types,
   value,
   warning,
 }) {
-  const [types, setTypes] = useState([]);
-
-  useEffect(() => {
-    const db = firebase.firestore();
-    db.collection('types')
-      .get()
-      .then((snapshot) => {
-        const storedTypes = [];
-        snapshot.forEach((doc) => {
-          const { type } = doc.data();
-          storedTypes.push(type);
-        });
-        setTypes(storedTypes);
-      });
-  }, []);
-
   return (
     <FormControl error={warning} style={{ paddingRight: '3rem' }}>
       <InputLabel id={`type-${index}-label`}>type</InputLabel>
       <Select
-        disabled={!types.length}
+        disabled={!types?.length}
         id={`type-${index}`}
         labelId={`type-${index}-label`}
         onBlur={onBlur}
         onChange={(e) =>
           dispatch(actions.setLemmaValue(index, 'type', e.target.value))
         }
-        value={types.length ? value : ''}
+        value={types?.length ? value : ''}
         style={{ width: '208px' }}
       >
         {types.map((type) => (
