@@ -21,6 +21,7 @@ function App() {
   const [apiKey] = useQueryParam('apiKey', StringParam);
   const [answersSize, setAnswersSize] = useState(null);
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
   const fireDb = useMemo(() => firebase.firestore(), []);
   const [dbReady, setDbReady] = useState(false);
   const [workerError, setWorkerError] = useState(null);
@@ -81,9 +82,8 @@ function App() {
    */
   useEffect(() => {
     if (data) {
-      const unsubscribe = fireDb
-        .collection('answers')
-        .onSnapshot((snapshot) => {
+      const unsubscribe = fireDb.collection('answers').onSnapshot(
+        (snapshot) => {
           setAnswersSize(snapshot.size);
           const rawValues = [];
           snapshot.forEach((doc) => {
@@ -98,7 +98,11 @@ function App() {
               return true;
             })
           );
-        });
+        },
+        (error) => {
+          setError(error);
+        }
+      );
 
       return unsubscribe;
     }
@@ -125,6 +129,7 @@ function App() {
   return (
     <div style={{ overflow: 'hidden' }}>
       <Header ref={headerRef} />
+      {error && <ErrorAlert clearError={() => setError(null)} error={error} />}
       {workerError && (
         <ErrorAlert
           clearError={() => setWorkerError(null)}
