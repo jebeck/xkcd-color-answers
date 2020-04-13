@@ -82,7 +82,7 @@ export default function LemmaRow({
   return (
     <Box display="flex" margin="1.5rem 0" width="100%">
       <TextField
-        autoFocus={index === 0}
+        autoFocus
         id={`value-${index}`}
         inputRef={textFieldRef}
         label="value"
