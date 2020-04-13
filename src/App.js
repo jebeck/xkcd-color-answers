@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 import { useQueryParam, StringParam } from 'use-query-params';
 
@@ -21,6 +21,7 @@ function App() {
   const [apiKey] = useQueryParam('apiKey', StringParam);
   const [answersSize, setAnswersSize] = useState(null);
   const [data, setData] = useState(null);
+  const fireDb = useMemo(() => firebase.firestore(), []);
   const [dbReady, setDbReady] = useState(false);
   const [workerError, setWorkerError] = useState(null);
   const [user, setUser] = useState(true);
@@ -80,9 +81,9 @@ function App() {
    */
   useEffect(() => {
     if (data) {
-      const db = firebase.firestore();
-      db.collection('answers').onSnapshot((snapshot) => {
-        if (snapshot.size !== answersSize) {
+      const unsubscribe = fireDb
+        .collection('answers')
+        .onSnapshot((snapshot) => {
           setAnswersSize(snapshot.size);
           const rawValues = [];
           snapshot.forEach((doc) => {
@@ -97,10 +98,11 @@ function App() {
               return true;
             })
           );
-        }
-      });
+        });
+
+      return unsubscribe;
     }
-  }, [answersSize, data]);
+  }, [data, fireDb]);
 
   /** set user in state on Firebase auth state change */
   useEffect(() => {
