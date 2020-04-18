@@ -21,7 +21,7 @@ export default forwardRef(function Footer({ answersSize, data }, ref) {
         width: '100%',
       }}
     >{`${
-      answersSize ? format(',')(data.length) : '?,???'
+      answersSize && data ? format(',')(data.length) : '?,???'
     } answers left to tag`}</footer>
   );
 });

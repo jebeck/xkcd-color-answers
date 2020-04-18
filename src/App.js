@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 import { useQueryParam, StringParam } from 'use-query-params';
 
@@ -16,18 +16,20 @@ import Header from './components/Header';
 import Login from './components/Login';
 import SQLWorker from './sql.worker';
 
+const fireDb = firebase.firestore();
+
 function App() {
-  const workerRef = useRef(null);
-  const [apiKey] = useQueryParam('apiKey', StringParam);
   const [answersSize, setAnswersSize] = useState(null);
+  const [apiKey] = useQueryParam('apiKey', StringParam);
   const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const fireDb = useMemo(() => firebase.firestore(), []);
   const [dbReady, setDbReady] = useState(false);
-  const [workerError, setWorkerError] = useState(null);
-  const [user, setUser] = useState(true);
-  const [headerRef, headerBounds] = useMeasure();
+  const [error, setError] = useState(null);
+  const [filteredData, setFilteredData] = useState(null);
   const [footerRef, footerBounds] = useMeasure();
+  const [headerRef, headerBounds] = useMeasure();
+  const [user, setUser] = useState(true);
+  const [workerError, setWorkerError] = useState(null);
+  const workerRef = useRef(null);
 
   /** set up SQLWorker */
   useEffect(() => {
@@ -90,7 +92,7 @@ function App() {
             const { raw } = doc.data();
             rawValues.push(raw);
           });
-          setData(
+          setFilteredData(
             data.filter((d) => {
               if (rawValues.includes(d.colorname)) {
                 return false;
@@ -106,7 +108,7 @@ function App() {
 
       return unsubscribe;
     }
-  }, [data, fireDb]);
+  }, [data]);
 
   /** set user in state on Firebase auth state change */
   useEffect(() => {
@@ -145,7 +147,9 @@ function App() {
         padding="0 1.5rem"
         width="100%"
       >
-        {!!answersSize && data && <DecoderForm answers={data} />}
+        {!!answersSize && filteredData && (
+          <DecoderForm answers={filteredData} />
+        )}
         {!answersSize && (
           <Box
             alignItems="center"
@@ -185,7 +189,7 @@ function App() {
           </Box>
         )}
       </Box>
-      <Footer answersSize={answersSize} data={data} ref={footerRef} />
+      <Footer answersSize={answersSize} data={filteredData} ref={footerRef} />
     </div>
   );
 }
