@@ -4,6 +4,17 @@ import {
   ImmerReducer,
 } from 'immer-reducer';
 
+export function makeInitialState(answers) {
+  return {
+    answers,
+    currentAnswer: 0,
+    lemmas: [makeBaseLemma()],
+    numLemmas: 1,
+    updatedFromStored: [],
+    verifiedAgainstStored: {},
+  };
+}
+
 export function makeBaseLemma() {
   return { value: '', type: 'color', unit: 'root', language: 'en' };
 }
@@ -40,6 +51,9 @@ class FormReducer extends ImmerReducer {
       obj[key] = true;
       return obj;
     }, {});
+  }
+  setVerifiedAgainstStored(index) {
+    this.draftState.verifiedAgainstStored[index] = true;
   }
 }
 

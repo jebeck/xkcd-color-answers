@@ -15,13 +15,14 @@ export default function UnitSelect({
   onBlur,
   units,
   value,
+  verifiedAgainstStored,
   warning,
 }) {
   return (
     <FormControl error={warning} style={{ paddingRight: '3rem' }}>
       <InputLabel id={`unit-${index}-label`}>unit</InputLabel>
       <Select
-        disabled={!units?.length}
+        disabled={!units?.length || verifiedAgainstStored}
         id={`unit-${index}`}
         labelId={`unit-${index}-label`}
         onBlur={onBlur}

@@ -17,13 +17,14 @@ export default function TypeSelect({
   onBlur,
   types,
   value,
+  verifiedAgainstStored,
   warning,
 }) {
   return (
     <FormControl error={warning} style={{ paddingRight: '3rem' }}>
       <InputLabel id={`type-${index}-label`}>type</InputLabel>
       <Select
-        disabled={!types?.length}
+        disabled={!types?.length || verifiedAgainstStored}
         id={`type-${index}`}
         labelId={`type-${index}-label`}
         onBlur={onBlur}

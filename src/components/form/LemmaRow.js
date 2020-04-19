@@ -31,6 +31,7 @@ export default function LemmaRow({
   state,
   types,
   units,
+  verifiedAgainstStored,
   warnings,
 }) {
   const [error, setError] = useState(null);
@@ -77,6 +78,7 @@ export default function LemmaRow({
             }
             if (updatedKeys.length) {
               dispatch(actions.setUpdatedWarning(index, updatedKeys));
+              dispatch(actions.setVerifiedAgainstStored(index));
               setTimeout(() => {
                 dispatch(actions.resetUpdatedWarning(index));
               }, 2500);
@@ -109,6 +111,7 @@ export default function LemmaRow({
       <Box display="flex" margin="1.5rem 0" minHeight="4.5rem" width="100%">
         <TextField
           autoFocus
+          disabled={verifiedAgainstStored}
           id={`value-${index}`}
           inputRef={textFieldRef}
           label="value"
@@ -120,27 +123,26 @@ export default function LemmaRow({
           style={{ paddingRight: '3rem', width: '312px' }}
         ></TextField>
         <TypeSelect
-          dispatch={dispatch}
           index={index}
-          onBlur={checkIfLemmaExists}
           types={types}
           value={state?.type}
+          verifiedAgainstStored={verifiedAgainstStored}
           warning={warnings?.type}
         />
         <UnitSelect
           dispatch={dispatch}
           index={index}
-          onBlur={checkIfLemmaExists}
           units={units}
           value={state?.unit}
+          verifiedAgainstStored={verifiedAgainstStored}
           warning={warnings?.unit}
         />
         <LanguageSelect
           dispatch={dispatch}
           index={index}
           languages={languages}
-          onBlur={checkIfLemmaExists}
           value={state?.language}
+          verifiedAgainstStored={verifiedAgainstStored}
           warning={warnings?.language}
         />
         {index > 0 ? (

@@ -14,7 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { useTheme } from '@material-ui/core/styles';
 
-import { actions, formReducer, makeBaseLemma } from '../../formReducer';
+import { actions, formReducer, makeInitialState } from '../../formReducer';
 import CurrentAnswer from '../CurrentAnswer';
 import ErrorAlert from '../ErrorAlert';
 import LemmaRow from './LemmaRow';
@@ -25,13 +25,7 @@ export default function DecoderForm({ answers }) {
   const theme = useTheme();
   const db = useMemo(() => firebase.firestore(), []);
 
-  const [state, dispatch] = useReducer(formReducer, {
-    answers,
-    currentAnswer: 0,
-    lemmas: [makeBaseLemma()],
-    numLemmas: 1,
-    updatedFromStored: [],
-  });
+  const [state, dispatch] = useReducer(formReducer, answers, makeInitialState);
   const [canSave, setCanSave] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -105,6 +99,7 @@ export default function DecoderForm({ answers }) {
               state={state.lemmas[index]}
               types={types}
               units={units}
+              verifiedAgainstStored={state.verifiedAgainstStored?.[index]}
               warnings={state.updatedFromStored[index]}
             />
           ))}

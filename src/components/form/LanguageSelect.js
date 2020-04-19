@@ -14,13 +14,14 @@ export default function TypeSelect({
   languages,
   onBlur,
   value,
+  verifiedAgainstStored,
   warning,
 }) {
   return (
     <FormControl error={warning} style={{ paddingRight: '3rem' }}>
       <InputLabel id={`language-${index}-label`}>lang</InputLabel>
       <Select
-        disabled={!languages?.length}
+        disabled={!languages?.length || verifiedAgainstStored}
         id={`language-${index}`}
         labelId={`language-${index}-label`}
         onBlur={onBlur}
