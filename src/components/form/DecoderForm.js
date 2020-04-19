@@ -39,6 +39,7 @@ export default function DecoderForm({ answers }) {
   const [units, setUnits] = useState([]);
 
   useEffect(() => {
+    console.log('DecoderForm Firebase useEffect');
     const unsubLanguages = fireDb
       .collection('languages')
       .onSnapshot((snapshot) => {
