@@ -57,8 +57,7 @@ export default function DecoderForm({ answers }) {
     const unsubTypes = fireDb.collection('types').onSnapshot((snapshot) => {
       const storedTypes = [];
       snapshot.forEach((doc) => {
-        const { type } = doc.data();
-        storedTypes.push(type);
+        storedTypes.push(doc.data());
       });
       setTypes(storedTypes);
     });

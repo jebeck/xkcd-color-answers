@@ -1,4 +1,6 @@
+import _ from 'lodash';
 import React from 'react';
+
 import 'firebase/firestore';
 
 import FormControl from '@material-ui/core/FormControl';
@@ -31,7 +33,7 @@ export default function TypeSelect({
         value={types?.length ? value : ''}
         style={{ width: '208px' }}
       >
-        {types.map((type) => (
+        {_.sortBy(types, 'index').map(({ type }) => (
           <MenuItem key={type} value={type}>
             {type}
           </MenuItem>
