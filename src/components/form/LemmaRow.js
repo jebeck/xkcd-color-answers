@@ -5,6 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import bows from 'bows';
 
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -19,6 +20,8 @@ import ErrorAlert from '../ErrorAlert';
 import LanguageSelect from './LanguageSelect';
 import TypeSelect from './TypeSelect';
 import UnitSelect from './UnitSelect';
+
+const log = bows('LemmaRow');
 
 export default function LemmaRow({
   dispatch,
@@ -40,7 +43,7 @@ export default function LemmaRow({
    */
   const checkIfLemmaExists = useCallback(() => {
     if (state.value !== '') {
-      console.log(`Checking if lemma '${state.value}' exists...`);
+      log(`Checking if lemma '${state.value}' exists...`);
       setCanSave(false);
       fireDb
         .collection('lemmas')
@@ -48,9 +51,7 @@ export default function LemmaRow({
         .get()
         .then((snapshot) => {
           if (snapshot.size === 0) {
-            console.log(
-              `Lemma ${state.value} does not exist (yet) in Firestore...`
-            );
+            log(`Lemma ${state.value} does not exist (yet) in Firestore...`);
             return setCanSave(true);
           }
           snapshot.forEach(async (doc) => {

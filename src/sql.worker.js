@@ -1,13 +1,16 @@
 /* eslint-disable no-restricted-globals */
-
 import initSqlJs from 'sql.js';
 
 let surveyDb;
 
+function log(str) {
+  console.log(`[Worker] ${str}`);
+}
+
 function initialize() {
   initSqlJs({ locateFile: (filename) => filename })
     .then((SQL) => {
-      console.log('Initialized SQL.js');
+      log('Initialized SQL.js');
 
       const xhr = new XMLHttpRequest();
       xhr.open('GET', 'xkcd_color_survey.sqlite', true);
@@ -15,7 +18,7 @@ function initialize() {
       xhr.onload = (e) => {
         var surveyArray = new Uint8Array(xhr.response);
         surveyDb = new SQL.Database(surveyArray);
-        console.log('Loaded survey DB');
+        log('Loaded survey DB');
         postMessage({ type: 'init' });
       };
       xhr.send();
@@ -28,7 +31,7 @@ function initialize() {
 initialize();
 
 self.onmessage = ({ data: { payload, type } }) => {
-  console.log(`SQLWorker received message of type: ${type}`);
+  log(`SQLWorker received message of type: ${type}`);
   switch (type) {
     case 'query': {
       const data = surveyDb.exec(payload[type]);

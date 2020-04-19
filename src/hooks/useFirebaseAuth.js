@@ -1,7 +1,11 @@
 import _ from 'lodash';
+import { useEffect, useState } from 'react';
+import bows from 'bows';
+
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { useEffect, useState } from 'react';
+
+const log = bows('useFirebaseAuth');
 
 firebase.initializeApp({
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -33,7 +37,7 @@ export default function useFirebaseAuth(email, setUser) {
     if (email && submitted) {
       window.localStorage.setItem('emailForSignIn', email);
       const auth = firebase.auth();
-      console.log('Sending Firebase sign-in e-mail...');
+      log('Sending Firebase sign-in e-mail...');
       auth.sendSignInLinkToEmail(email, actionCodeSettings).catch((err) => {
         setLoginError(_.pick(err, ['code', 'message']));
         setSubmitted(false);
@@ -43,7 +47,7 @@ export default function useFirebaseAuth(email, setUser) {
 
   useEffect(() => {
     if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
-      console.log('Firebase sign-in from link...');
+      log('Firebase sign-in from link...');
       const email = window.localStorage.getItem('emailForSignIn');
       const auth = firebase.auth();
       auth

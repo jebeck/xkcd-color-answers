@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import bows from 'bows';
 import useMeasure from 'react-use-measure';
 import { useQueryParam, StringParam } from 'use-query-params';
 
@@ -17,6 +18,7 @@ import Login from './components/Login';
 import SQLWorker from './sql.worker';
 
 const fireDb = firebase.firestore();
+const log = bows('App');
 
 function App() {
   const [answersSize, setAnswersSize] = useState(null);
@@ -37,7 +39,7 @@ function App() {
     workerRef.current = worker;
 
     worker.onmessage = ({ data: { payload, type } }) => {
-      console.log(`App.js received message of type: ${type}`);
+      log(`App.js received message of type: ${type}`);
       switch (type) {
         case 'init': {
           setDbReady(true);

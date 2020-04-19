@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import bows from 'bows';
 import { range } from 'd3-array';
 
 import firebase from 'firebase/app';
@@ -17,6 +18,8 @@ import { actions, formReducer, makeBaseLemma } from '../../formReducer';
 import CurrentAnswer from '../CurrentAnswer';
 import ErrorAlert from '../ErrorAlert';
 import LemmaRow from './LemmaRow';
+
+const log = bows('DecoderForm');
 
 export default function DecoderForm({ answers }) {
   const theme = useTheme();
@@ -39,7 +42,7 @@ export default function DecoderForm({ answers }) {
   const [units, setUnits] = useState([]);
 
   useEffect(() => {
-    console.log('DecoderForm Firebase useEffect');
+    log('DecoderForm Firebase useEffect');
     const unsubLanguages = fireDb
       .collection('languages')
       .onSnapshot((snapshot) => {
@@ -142,7 +145,7 @@ export default function DecoderForm({ answers }) {
           onClick={
             canSave
               ? async () => {
-                  console.log(`Clicked save & next`);
+                  log(`Clicked save & next`);
                   setIsSaving(true);
                   const answer = {
                     lemmas: [],
@@ -164,7 +167,7 @@ export default function DecoderForm({ answers }) {
                             return val;
                           })
                         );
-                        console.log(`New lemma ${ref.id} added`);
+                        log(`New lemma ${ref.id} added`);
                         answer.lemmas.push(db.doc(ref.path));
                       } catch (error) {
                         setIsSaving(false);
@@ -174,7 +177,7 @@ export default function DecoderForm({ answers }) {
                   }
                   try {
                     const ref = await db.collection('answers').add(answer);
-                    console.log(`New answer ${ref.id} added`);
+                    log(`New answer ${ref.id} added`);
                   } catch (error) {
                     setIsSaving(false);
                     return setError(error);
