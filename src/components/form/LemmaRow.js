@@ -59,27 +59,27 @@ export default function LemmaRow({
 
             const pairs = Object.entries(doc.data());
 
+            const updatedKeys = [];
+
             for (let i = 0; i < pairs.length; ++i) {
               const [key, value] = pairs[i];
 
               if (key !== 'value') {
                 const valueDoc = await value.get();
                 const actualValue = valueDoc.data()[key];
-                const updatedKeys = [];
 
                 if (actualValue !== state[key]) {
                   updatedKeys.push(key);
                   dispatch(actions.setLemmaValue(index, key, actualValue));
                 }
                 setCanSave(true);
-
-                if (updatedKeys.length) {
-                  dispatch(actions.setUpdatedWarning(index, updatedKeys));
-                  setTimeout(() => {
-                    dispatch(actions.resetUpdatedWarning(index));
-                  }, 2500);
-                }
               }
+            }
+            if (updatedKeys.length) {
+              dispatch(actions.setUpdatedWarning(index, updatedKeys));
+              setTimeout(() => {
+                dispatch(actions.resetUpdatedWarning(index));
+              }, 2500);
             }
           });
         })
