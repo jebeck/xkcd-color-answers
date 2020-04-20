@@ -108,7 +108,7 @@ export default function LemmaRow({
     }
   }, [index, state.value]);
 
-  const displaySubStrError = state?.value && !isSubStringMatch;
+  const displaySubStrError = Boolean(state?.value && !isSubStringMatch);
 
   return (
     <>
