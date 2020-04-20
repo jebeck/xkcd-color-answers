@@ -9,7 +9,7 @@ export default forwardRef(function Header(props, ref) {
     <header
       ref={ref}
       style={{
-        fontSize: '2.5rem',
+        fontSize: '1.5rem',
         fontStyle: 'italic',
         left: 0,
         padding: '1rem 1.5rem',

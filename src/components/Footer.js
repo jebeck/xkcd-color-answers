@@ -11,7 +11,7 @@ export default forwardRef(function Footer({ answersSize, data }, ref) {
       ref={ref}
       style={{
         bottom: 0,
-        fontSize: '2.5rem',
+        fontSize: '1.5rem',
         fontStyle: 'italic',
         left: 0,
         padding: '1rem 1.5rem',

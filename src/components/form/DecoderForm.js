@@ -85,7 +85,9 @@ export default function DecoderForm({ answers }) {
         answerText={state.answers[state.currentAnswer].colorname}
       />
       {!isSaving ? (
-        <Container style={{ padding: '3rem', position: 'relative' }}>
+        <Container
+          style={{ overflowY: 'scroll', padding: '3rem', position: 'relative' }}
+        >
           {range(0, state.numLemmas).map((index) => (
             <LemmaRow
               dispatch={dispatch}
@@ -183,7 +185,7 @@ export default function DecoderForm({ answers }) {
           style={{
             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
             fontWeight: 'bold',
-            fontSize: '2rem',
+            fontSize: '1.5rem',
             pointerEvents: 'unset',
           }}
         >

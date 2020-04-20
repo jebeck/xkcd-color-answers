@@ -9,11 +9,15 @@ export default function CurrentAnswer({ answerText }) {
       <Typography
         color="textSecondary"
         variant="subtitle1"
-        style={{ fontSize: '4rem' }}
+        style={{ fontSize: '3rem' }}
       >
         current answer:
       </Typography>
-      <Typography align="center" variant="h1" style={{ alignSelf: 'center' }}>
+      <Typography
+        align="center"
+        variant="h1"
+        style={{ alignSelf: 'center', fontSize: '4.5rem' }}
+      >
         {answerText}
       </Typography>
     </Box>
