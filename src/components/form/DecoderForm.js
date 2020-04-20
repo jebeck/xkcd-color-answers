@@ -9,6 +9,7 @@ import 'firebase/firestore';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Container from '@material-ui/core/Container';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import IconButton from '@material-ui/core/IconButton';
@@ -202,10 +203,18 @@ export default function DecoderForm({ answers }) {
             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
             fontWeight: 'bold',
             fontSize: '1.5rem',
+            minWidth: '12.125rem',
             pointerEvents: 'unset',
           }}
         >
-          save &amp; next
+          {isSaving ? (
+            <>
+              <CircularProgress size="1.5rem" />
+              &nbsp;saving
+            </>
+          ) : (
+            ` save & next`
+          )}
         </Button>
       </Box>
       <hr style={{ borderColor: theme.palette.primary.dark, width: '100%' }} />
