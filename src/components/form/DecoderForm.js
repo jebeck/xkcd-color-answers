@@ -22,16 +22,13 @@ import LemmaRow from './LemmaRow';
 const log = bows('DecoderForm');
 
 export default function DecoderForm({ answers }) {
-  const theme = useTheme();
-  const db = useMemo(() => firebase.firestore(), []);
-
-  const [state, dispatch] = useReducer(formReducer, answers, makeInitialState);
-  const [canSave, setCanSave] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [canSave, setCanSave] = useState(false);
   const [error, setError] = useState(null);
   const fireDb = useMemo(() => firebase.firestore(), []);
-
+  const [isSaving, setIsSaving] = useState(false);
   const [languages, setLanguages] = useState([]);
+  const [state, dispatch] = useReducer(formReducer, answers, makeInitialState);
+  const theme = useTheme();
   const [types, setTypes] = useState([]);
   const [units, setUnits] = useState([]);
 
@@ -92,6 +89,7 @@ export default function DecoderForm({ answers }) {
           {range(0, state.numLemmas).map((index) => (
             <LemmaRow
               dispatch={dispatch}
+              fullAnswerString={answers[state.currentAnswer]?.colorname}
               index={index}
               key={index}
               languages={languages}
@@ -149,20 +147,20 @@ export default function DecoderForm({ answers }) {
                     const lemma = state.lemmas[i];
                     const { id } = lemma;
                     if (id) {
-                      const ref = db.collection('lemmas').doc(id);
-                      answer.lemmas.push(db.doc(ref.path));
+                      const ref = fireDb.collection('lemmas').doc(id);
+                      answer.lemmas.push(fireDb.doc(ref.path));
                     } else {
                       try {
-                        const ref = await db.collection('lemmas').add(
+                        const ref = await fireDb.collection('lemmas').add(
                           _.mapValues(lemma, (val, key) => {
                             if (key !== 'value') {
-                              return db.doc(`${key}s/${val}`);
+                              return fireDb.doc(`${key}s/${val}`);
                             }
                             return val;
                           })
                         );
                         log(`New lemma ${ref.id} added`);
-                        answer.lemmas.push(db.doc(ref.path));
+                        answer.lemmas.push(fireDb.doc(ref.path));
                       } catch (error) {
                         setIsSaving(false);
                         return setError(error);
@@ -170,7 +168,7 @@ export default function DecoderForm({ answers }) {
                     }
                   }
                   try {
-                    const ref = await db.collection('answers').add(answer);
+                    const ref = await fireDb.collection('answers').add(answer);
                     log(`New answer ${ref.id} added`);
                   } catch (error) {
                     setIsSaving(false);

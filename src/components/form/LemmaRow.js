@@ -25,6 +25,7 @@ const log = bows('LemmaRow');
 
 export default function LemmaRow({
   dispatch,
+  fullAnswerString,
   index,
   languages,
   setCanSave,
@@ -36,6 +37,10 @@ export default function LemmaRow({
 }) {
   const [error, setError] = useState(null);
   const fireDb = useMemo(() => firebase.firestore(), []);
+  const isSubStringMatch = useMemo(
+    () => fullAnswerString.includes(state?.value),
+    [fullAnswerString, state]
+  );
   const textFieldRef = useRef();
 
   /** in order to enforce consistent type, unit, and language for each lemma,
@@ -103,6 +108,8 @@ export default function LemmaRow({
     }
   }, [index, state.value]);
 
+  const displaySubStrError = state?.value && !isSubStringMatch;
+
   return (
     <>
       {error ? (
@@ -111,7 +118,13 @@ export default function LemmaRow({
       <Box display="flex" margin="1.5rem 0" minHeight="4.5rem" width="100%">
         <TextField
           autoFocus
+          error={displaySubStrError}
           disabled={verifiedAgainstStored}
+          helperText={
+            displaySubStrError
+              ? `Not a sub string of "${fullAnswerString}"`
+              : ''
+          }
           id={`value-${index}`}
           inputRef={textFieldRef}
           label="value"
