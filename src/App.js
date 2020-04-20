@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import bows from 'bows';
 import useMeasure from 'react-use-measure';
 import { useQueryParam, StringParam } from 'use-query-params';
@@ -17,7 +17,6 @@ import Header from './components/Header';
 import Login from './components/Login';
 import SQLWorker from './sql.worker';
 
-const fireDb = firebase.firestore();
 const log = bows('App');
 
 function App() {
@@ -27,6 +26,7 @@ function App() {
   const [dbReady, setDbReady] = useState(false);
   const [error, setError] = useState(null);
   const [filteredData, setFilteredData] = useState(null);
+  const fireDb = useMemo(() => firebase.firestore(), []);
   const [footerRef, footerBounds] = useMeasure();
   const [headerRef, headerBounds] = useMeasure();
   const [user, setUser] = useState(true);
@@ -110,7 +110,7 @@ function App() {
 
       return unsubscribe;
     }
-  }, [data]);
+  }, [data, fireDb]);
 
   /** set user in state on Firebase auth state change */
   useEffect(() => {
