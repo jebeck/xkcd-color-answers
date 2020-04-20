@@ -19,7 +19,9 @@ export default function TypeSelect({
 }) {
   return (
     <FormControl error={warning} style={{ paddingRight: '3rem' }}>
-      <InputLabel id={`language-${index}-label`}>lang</InputLabel>
+      <InputLabel id={`language-${index}-label`} required>
+        lang
+      </InputLabel>
       <Select
         disabled={!languages?.length || verifiedAgainstStored}
         id={`language-${index}`}

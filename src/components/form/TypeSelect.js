@@ -22,7 +22,9 @@ export default function TypeSelect({
 }) {
   return (
     <FormControl error={warning} style={{ paddingRight: '3rem' }}>
-      <InputLabel id={`type-${index}-label`}>type</InputLabel>
+      <InputLabel id={`type-${index}-label`} required>
+        type
+      </InputLabel>
       <Select
         disabled={!types?.length || verifiedAgainstStored}
         id={`type-${index}`}

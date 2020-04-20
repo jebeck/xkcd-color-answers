@@ -20,7 +20,9 @@ export default function UnitSelect({
 }) {
   return (
     <FormControl error={warning} style={{ paddingRight: '3rem' }}>
-      <InputLabel id={`unit-${index}-label`}>unit</InputLabel>
+      <InputLabel id={`unit-${index}-label`} required>
+        unit
+      </InputLabel>
       <Select
         disabled={!units?.length || verifiedAgainstStored}
         id={`unit-${index}`}

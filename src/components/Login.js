@@ -17,6 +17,7 @@ import useFirebaseAuth from '../hooks/useFirebaseAuth';
 export default function Login({ apiKey, setUser, user }) {
   const [anonymous, setAnonymous] = useState(false);
   const [email, setEmail] = useState('');
+
   const {
     clearError,
     loginError,

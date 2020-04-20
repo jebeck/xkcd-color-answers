@@ -132,6 +132,7 @@ export default function LemmaRow({
           onChange={(e) =>
             dispatch(actions.setLemmaValue(index, 'value', e.target.value))
           }
+          required
           value={state?.value}
           style={{ paddingRight: '3rem', width: '312px' }}
         ></TextField>
