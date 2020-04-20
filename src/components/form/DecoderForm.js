@@ -10,6 +10,7 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import IconButton from '@material-ui/core/IconButton';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { useTheme } from '@material-ui/core/styles';
@@ -31,6 +32,13 @@ export default function DecoderForm({ answers }) {
   const theme = useTheme();
   const [types, setTypes] = useState([]);
   const [units, setUnits] = useState([]);
+
+  const numWordsInAnswer = useMemo(() => {
+    const answer = answers[state?.currentAnswer]?.colorname;
+    if (answer) {
+      return answer.split(' ').length;
+    }
+  }, [answers, state]);
 
   useEffect(() => {
     log('DecoderForm Firebase useEffect');
@@ -132,7 +140,15 @@ export default function DecoderForm({ answers }) {
         </Box>
       ) : null}
       <Box flexGrow={1} />
-      <Box alignSelf="flex-end" paddingBottom="3rem">
+      {numWordsInAnswer !== state?.numLemmas ? (
+        <FormHelperText
+          error
+          style={{ paddingBottom: '0.25rem', textAlign: 'right' }}
+        >
+          # of lemmas does not match # of words in answer
+        </FormHelperText>
+      ) : null}
+      <Box alignSelf="flex-end" paddingBottom="2rem">
         <Button
           color="primary"
           disabled={!buttonEnabled}
