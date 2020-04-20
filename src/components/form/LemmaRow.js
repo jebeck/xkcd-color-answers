@@ -137,6 +137,7 @@ export default function LemmaRow({
           style={{ paddingRight: '3rem', width: '312px' }}
         ></TextField>
         <TypeSelect
+          dispatch={dispatch}
           index={index}
           types={types}
           value={state?.type}
