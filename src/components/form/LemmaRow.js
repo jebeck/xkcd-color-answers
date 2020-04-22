@@ -13,6 +13,7 @@ import 'firebase/firestore';
 import Box from '@material-ui/core/Box';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
+import ReplayIcon from '@material-ui/icons/Replay';
 import TextField from '@material-ui/core/TextField';
 
 import { actions } from '../../formReducer';
@@ -160,6 +161,9 @@ export default function LemmaRow({
           verifiedAgainstStored={verifiedAgainstStored}
           warning={warnings?.language}
         />
+        <IconButton onClick={() => dispatch(actions.resetVerifiedWarnings())}>
+          <ReplayIcon color="primary" />
+        </IconButton>
         {index > 0 ? (
           <IconButton onClick={() => dispatch(actions.removeLemma(index))}>
             <DeleteIcon color="secondary" />
