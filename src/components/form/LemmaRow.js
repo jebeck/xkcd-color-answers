@@ -78,13 +78,14 @@ export default function LemmaRow({
                 if (actualValue !== state[key]) {
                   updatedKeys.push(key);
                   dispatch(actions.setLemmaValue(index, key, actualValue));
+                } else {
+                  dispatch(actions.setVerifiedAgainstStored(index));
                 }
                 setCanSave(true);
               }
             }
             if (updatedKeys.length) {
               dispatch(actions.setUpdatedWarning(index, updatedKeys));
-              dispatch(actions.setVerifiedAgainstStored(index));
               setTimeout(() => {
                 dispatch(actions.resetUpdatedWarning(index));
               }, 2500);
