@@ -33,6 +33,8 @@ class FormReducer extends ImmerReducer {
   reset() {
     this.draftState.numLemmas = 1;
     this.draftState.lemmas = [makeBaseLemma()];
+    this.draftState.updatedFromStored = [];
+    this.draftState.verifiedAgainstStored = {};
   }
   setAnswers(answers) {
     this.draftState.answers = answers;
