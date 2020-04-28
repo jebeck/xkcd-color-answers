@@ -3,7 +3,7 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 
-export default function CurrentAnswer({ answerText }) {
+export default function CurrentAnswer({ colorname, count }) {
   return (
     <Box display="flex" flexDirection="column">
       <Typography
@@ -18,8 +18,9 @@ export default function CurrentAnswer({ answerText }) {
         variant="h1"
         style={{ alignSelf: 'center', fontSize: '4.5rem' }}
       >
-        {answerText}
+        {colorname}
       </Typography>
+      <small style={{ alignSelf: 'center' }}>{`(${count} instances)`}</small>
     </Box>
   );
 }

@@ -90,9 +90,7 @@ export default function DecoderForm({ answers }) {
       <hr
         style={{ borderColor: theme.palette.secondary.dark, width: '100%' }}
       />
-      <CurrentAnswer
-        answerText={state.answers[state.currentAnswer].colorname}
-      />
+      <CurrentAnswer {...state.answers[state.currentAnswer]} />
       {!isSaving ? (
         <Container
           style={{ overflowY: 'scroll', padding: '3rem', position: 'relative' }}
