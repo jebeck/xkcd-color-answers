@@ -162,7 +162,9 @@ export default function LemmaRow({
           verifiedAgainstStored={verifiedAgainstStored}
           warning={warnings?.language}
         />
-        <IconButton onClick={() => dispatch(actions.resetVerifiedWarnings())}>
+        <IconButton
+          onClick={() => dispatch(actions.resetVerifiedWarnings(index))}
+        >
           <ReplayIcon color="primary" />
         </IconButton>
         {index > 0 ? (
