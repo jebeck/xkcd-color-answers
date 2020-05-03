@@ -184,7 +184,12 @@ export default function LemmaRow({
           <ReplayIcon color="primary" />
         </IconButton>
         {index > 0 ? (
-          <IconButton onClick={() => dispatch(actions.removeLemma(index))}>
+          <IconButton
+            onClick={() => {
+              dispatch(actions.removeLemma(index));
+              dispatch(actions.resetVerifiedWarnings(index));
+            }}
+          >
             <DeleteIcon color="secondary" />
           </IconButton>
         ) : null}
