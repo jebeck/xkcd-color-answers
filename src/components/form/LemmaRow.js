@@ -56,41 +56,57 @@ export default function LemmaRow({
         .collection('lemmas')
         .where('value', '==', state.value)
         .get()
-        .then((snapshot) => {
+        .then(async (snapshot) => {
           if (snapshot.size === 0) {
             log(`Lemma ${state.value} does not exist (yet) in Firestore...`);
             return setCanSave(true);
+          } else if (snapshot.size > 1) {
+            log(`More than one lemma found matching '${state.value}'...`);
           }
-          snapshot.forEach(async (doc) => {
-            dispatch(actions.setLemmaValue(index, 'id', doc.id));
-
-            const pairs = Object.entries(doc.data());
-
-            const updatedKeys = [];
-
-            for (let i = 0; i < pairs.length; ++i) {
-              const [key, value] = pairs[i];
-
-              if (key !== 'value') {
-                const valueDoc = await value.get();
-                const actualValue = valueDoc.data()[key];
-
-                if (actualValue !== state[key]) {
-                  updatedKeys.push(key);
-                  dispatch(actions.setLemmaValue(index, key, actualValue));
-                } else {
-                  dispatch(actions.setVerifiedAgainstStored(index));
-                }
-                setCanSave(true);
+          let storedLemma;
+          snapshot.forEach((doc) => {
+            const lemma = doc.data();
+            if (snapshot.size > 1) {
+              if (lemma.preferred) {
+                storedLemma = lemma;
+                dispatch(actions.setLemmaValue(index, 'id', doc.id));
               }
-            }
-            if (updatedKeys.length) {
-              dispatch(actions.setUpdatedWarning(index, updatedKeys));
-              setTimeout(() => {
-                dispatch(actions.resetUpdatedWarning(index));
-              }, 2500);
+            } else {
+              storedLemma = lemma;
+              dispatch(actions.setLemmaValue(index, 'id', doc.id));
             }
           });
+          if (snapshot.size > 1 && !storedLemma) {
+            throw new Error(
+              `No preferred lemma found matching '${state.value}'...`
+            );
+          }
+          const pairs = Object.entries(storedLemma);
+
+          const updatedKeys = [];
+
+          for (let i = 0; i < pairs.length; ++i) {
+            const [key, value] = pairs[i];
+
+            if (!['preferred', 'value'].includes(key)) {
+              const valueDoc = await value.get();
+              const actualValue = valueDoc.data()[key];
+
+              if (actualValue !== state[key]) {
+                updatedKeys.push(key);
+                dispatch(actions.setLemmaValue(index, key, actualValue));
+              } else {
+                dispatch(actions.setVerifiedAgainstStored(index));
+              }
+              setCanSave(true);
+            }
+          }
+          if (updatedKeys.length) {
+            dispatch(actions.setUpdatedWarning(index, updatedKeys));
+            setTimeout(() => {
+              dispatch(actions.resetUpdatedWarning(index));
+            }, 2500);
+          }
         })
         .catch((error) => {
           setError(
