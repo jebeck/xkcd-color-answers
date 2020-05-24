@@ -50,6 +50,7 @@ class FormReducer extends ImmerReducer {
   }
   resetVerifiedWarnings(index) {
     this.draftState.verifiedAgainstStored[index] = undefined;
+    this.draftState.lemmas[index].id = null;
   }
   setUpdatedWarning(index, keys) {
     this.draftState.updatedFromStored[index] = keys.reduce((obj, key) => {
